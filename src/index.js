@@ -89,18 +89,12 @@ var updateReference = function (data) {
 
 function emptyGitHubCommit (opts) {
   opts = opts || {}
-  if (!opts.owner || !opts.repo) {
+  if (!opts.owner || !opts.repo || !opts.github) {
     const e = new Error('missing owner or repo')
     return Promise.reject(e)
   }
   var data = {}
-  data.github = new GitHubApi()
-  if (opts.token) {
-    data.github.authenticate({
-      type: 'oauth',
-      token: opts.token
-    })
-  }
+  data.github = opts.github
   data.owner = opts.owner
   data.repo = opts.repo
 
@@ -131,16 +125,3 @@ function emptyGitHubCommit (opts) {
 }
 
 module.exports = emptyGitHubCommit
-
-if (!module.parent) {
-  console.log('demo commit')
-  emptyGitHubCommit({
-    owner: 'bahmutov',
-    repo: 'make-empty-github-commit',
-    token: process.env.TOKEN,
-    branch: 'test-branch'
-  }).then(console.log, e => {
-    console.error(e)
-    process.exit(1)
-  })
-}
